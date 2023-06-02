@@ -1,0 +1,92 @@
+{"level":"info","message":"Hello world","service":"user-service","timestamp":"2023-06-02 18:38:18"}
+{"level":"info","message":"Hello world","timestamp":"2023-06-02 18:38:30"}
+{"level":"info","message":"Hello world","timestamp":"2023-06-02 18:38:44"}
+info: Hello world {"timestamp":"2023-06-02 18:40:31"}
+2023-06-02 18:41:46 - info: Hello world
+2023-06-02 18:41:54 - info: Hello world
+2023-06-02 18:42:32 - info: Hello world
+2023-06-02 18:42:43 - info: Hello world
+2023-06-02 18:42:57 - info: Hello world
+2023-06-02 18:43:25|info|Hello world
+2023-06-02 18:43:39|info|Hello world
+2023-06-02 18:44:51|info|Scrape Tioga
+2023-06-02 18:44:51|info|yay
+2023-06-02 18:44:51|info|Got tioga:
+2023-06-02 18:44:59|info|RESULT
+2023-06-02 18:45:06|info|RESULT
+2023-06-02 18:45:06|info|Final result
+2023-06-02 18:45:06|info|Last email within a week, not sending email
+2023-06-02 18:45:53|info|Scrape Tioga
+2023-06-02 18:45:53|info|yay
+2023-06-02 18:45:53|info|Tioga contents
+2023-06-02 18:46:02|info|RESULT: - June 1, 2023. This is the date of the latest update.
+- April 1, 2023. This is the date when Yosemite had record snowpack.
+- Late June or early July. This is when Tioga Road opened in previous snowiest years.
+- Late May or June. This is when Tioga Road is typically open to vehicles.
+- Sometime in November. This is when Tioga Road typically closes.
+- April 15. This is when plowing typically begins.
+2023-06-02 18:46:11|info|RESULT: {
+  "is_open": false,
+  "is_open_soon": true,
+  "explanation": "Tioga Road is currently closed as of June 1, 2023, but plows are nearing Yosemite Creek. Tioga Road typically opens to vehicles in late May or June, and there is no way to provide a more precise estimate for this year due to the record snowpack. However, plowing typically begins around April 15, so it is expected to open soon."
+}
+2023-06-02 18:46:11|info|Result
+2023-06-02 18:46:11|info|Last email within a week, not sending email
+2023-06-02 18:46:29|info|Scrape Tioga
+2023-06-02 18:46:29|info|yay
+2023-06-02 18:46:29|info|Tioga contents: ----------
+
+_June 1, 2023 (updated every Friday)_
+
+Plows are currently just east of Yosemite Creek, which is about 18 miles from Crane Flat.
+
+_Yosemite had record snowpack (over 240% of average) as of April 1, 2023. In the previous snowiest years, Tioga Road opened in late June or early July. There is no way to provide a more precise estimate for this year._
+
+_Tioga Road is typically open to vehicles from late May or June until sometime in November. Plowing typically begins around April 15._
+
+2023-06-02 18:46:38|info|RESULT: - June 1, 2023. This is the date when the content was last updated.
+- April 1, 2023. This is the date when Yosemite had record snowpack.
+- Late June or early July. This is when Tioga Road typically opened in the previous snowiest years.
+- Late May or June. This is when Tioga Road is typically open to vehicles.
+- April 15. This is when plowing typically begins.
+- Sometime in November. This is when Tioga Road typically closes.
+2023-06-02 18:46:46|info|RESULT: {
+  "is_open": false,
+  "is_open_soon": true,
+  "explanation": "Tioga Road is not currently open as there is no specific date mentioned in the text. However, plows are currently just east of Yosemite Creek, which indicates that it will open soon. The text mentions that Tioga Road typically opens to vehicles from late May or June until sometime in November, and plowing typically begins around April 15. Therefore, it is expected to open soon."
+}
+2023-06-02 18:46:46|info|Result: {
+  "is_open": false,
+  "is_open_soon": true,
+  "explanation": "Tioga Road is not currently open as there is no specific date mentioned in the text. However, plows are currently just east of Yosemite Creek, which indicates that it will open soon. The text mentions that Tioga Road typically opens to vehicles from late May or June until sometime in November, and plowing typically begins around April 15. Therefore, it is expected to open soon."
+}
+2023-06-02 18:46:46|info|Last email within a week, not sending email
+2023-06-02 18:51:29|info|Scrape Tioga
+2023-06-02 18:51:29|info|yay
+2023-06-02 18:51:29|info|Tioga contents: ----------
+
+_June 1, 2023 (updated every Friday)_
+
+Plows are currently just east of Yosemite Creek, which is about 18 miles from Crane Flat.
+
+_Yosemite had record snowpack (over 240% of average) as of April 1, 2023. In the previous snowiest years, Tioga Road opened in late June or early July. There is no way to provide a more precise estimate for this year._
+
+_Tioga Road is typically open to vehicles from late May or June until sometime in November. Plowing typically begins around April 15._
+
+2023-06-02 18:51:38|info|RESULT: - June 1, 2023. This is the date when the content was updated.
+- April 1, 2023. This is the date when Yosemite had record snowpack.
+- Late June or early July. This is when Tioga Road opened in previous snowiest years.
+- Late May or June. This is when Tioga Road is typically open to vehicles.
+- April 15. This is when plowing typically begins.
+- Sometime in November. This is when Tioga Road is typically closed.
+2023-06-02 18:51:47|info|RESULT: {
+    "is_open": false,
+    "is_open_soon": true,
+    "explanation": "Tioga Road is not currently open as of June 1, 2023, but plows are currently just east of Yosemite Creek. Tioga Road is expected to open in late June or early July based on previous snowiest years, and plowing typically begins around April 15. There is no way to provide a more precise estimate for this year, but it is expected to open soon."
+}
+2023-06-02 18:51:47|info|Result: {
+  "is_open": false,
+  "is_open_soon": true,
+  "explanation": "Tioga Road is not currently open as of June 1, 2023, but plows are currently just east of Yosemite Creek. Tioga Road is expected to open in late June or early July based on previous snowiest years, and plowing typically begins around April 15. There is no way to provide a more precise estimate for this year, but it is expected to open soon."
+}
+2023-06-02 18:51:47|info|Last email within a week, not sending email

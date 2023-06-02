@@ -1,0 +1,8 @@
+{
+  "cron": [
+    {
+      "command": "yarn run check-tioga",
+      "schedule": "0 * * * *"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: white;
+  background-color: #292929;
+}
+
+a {
+  @apply text-blue-300;
+}
+
+a:hover {
+  @apply underline;
+}
+
+.tioga-scraped-text > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
