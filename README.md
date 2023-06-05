@@ -1,4 +1,4 @@
-Pardon the hackiness. I just wanted to get something working quickly.
+Pardon the hackiness. I just wanted to get something working quickly ><.
 
 See package.json for some common commands.
 
