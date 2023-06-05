@@ -4,7 +4,7 @@ import {
   create_db,
   get_all_history,
   insert_history,
-  last_email_within_a_week,
+  sent_email_this_year,
 } from "./tioga_db";
 
 const historicalData = [

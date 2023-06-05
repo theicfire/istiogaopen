@@ -87,7 +87,7 @@ export async function get_all_history(): Promise<HistoryRow[]> {
 
 export async function get_all_emails(): Promise<string[]> {
   const db = await sqlite3.open("./storage/tioga.db");
-  const rows: any = await db.all(`SELECT ts, result FROM EmailList`);
+  const rows: any = await db.all(`SELECT ts, email FROM EmailList`);
   await db.close();
   return rows;
 }
@@ -103,15 +103,15 @@ async function most_recent_sent_email(): Promise<string> {
   return rows;
 }
 
-export async function last_email_within_a_week() {
+export async function sent_email_this_year() {
   const ts = await most_recent_sent_email();
+  console.log("got ts", ts);
   if (ts === null) {
     return false;
   } else {
-    const ONE_WEEK = 60 * 60 * 24 * 7;
-    return (
-      Math.floor(new Date().getTime() / 1000) - parseInt(ts, 10) < ONE_WEEK
-    );
+    const year = new Date(parseInt(ts, 10) * 1000).getFullYear();
+    const currentYear = new Date().getFullYear();
+    return year === currentYear;
   }
 }
 

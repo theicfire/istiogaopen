@@ -5,9 +5,10 @@ import {
 } from "openai";
 import {
   create_db,
+  get_all_emails,
   get_all_history,
   insert_history,
-  last_email_within_a_week,
+  sent_email_this_year,
 } from "./tioga_db";
 import { extractTiogaSection, scrapeTioga } from "./scrape_tioga";
 import { sendEmail } from "./send_email";
@@ -171,16 +172,29 @@ export async function fullScrapeTioga() {
   logger.info(`Result: ${JSON.stringify(result, null, 2)}`);
   let will_send_email = result.is_open || result.is_open_soon;
   if (will_send_email) {
-    if (await last_email_within_a_week()) {
-      logger.info("Last email within a week, not sending email");
+    if (await sent_email_this_year()) {
+      logger.info("Already sent email this year, not sending again");
       will_send_email = false;
     }
   }
+  setTimeout(() => {}, 2000);
   if (will_send_email) {
-    const bcc_recipients = ["theicfire@gmail.com"];
+    const bcc_recipients = await get_all_emails();
     const subject = "Tioga is possibly open soon!";
-    let contents = "Tioga Road is possibly open soon! From the website:";
-    contents += "\n\n" + tioga_contents;
+    let contents = `I *think* Tioga road will be opening soon!!
+
+    Double check me, though: https://www.nps.gov/yose/planyourvisit/tioga.htm
+
+    Sorry if there's a bug, I'll fix it quickly. Maybe the AI mischaracterized the website, hmm.
+
+    Love,
+    istiogaopen.com`;
+    contents = contents
+      .split("\n")
+      .map((line) => line.trim())
+      .join("\n");
+
+    logger.info("Sending email to", bcc_recipients);
     sendEmail(bcc_recipients, subject, contents);
   }
   const misc_data = {};
