@@ -26,11 +26,11 @@ Then, the steps are:
 - Make changes
 - yarn build
 - commit the new .tar.gz file
-- git push dokku main:master
+- git push dokku master:main
 
 # Logs
 Logs sit in the storage/ directory. On the deployed machine, that's at /var/lib/dokku/data/storage/tioga/
 
 # Cronjob
-- dokku has the cronjob set up via app.json
+dokku has the cronjob set up via app.json
 
