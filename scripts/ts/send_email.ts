@@ -2,11 +2,15 @@ import nodemailer from "nodemailer";
 import logger from "./logger";
 import "dotenv/config";
 
-export async function sendEmail(
+export function sendEmailAsync(
   bccRecipients: string[],
   subject: string,
   contents: string
 ) {
+  if (bccRecipients.length === 0) {
+    logger.info("No recipients, not sending email");
+    return;
+  }
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {

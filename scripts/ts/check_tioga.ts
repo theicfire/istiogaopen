@@ -11,7 +11,7 @@ import {
   sent_email_this_year,
 } from "./tioga_db";
 import { extractTiogaSection, scrapeTioga } from "./scrape_tioga";
-import { sendEmail } from "./send_email";
+import { sendEmailAsync } from "./send_email";
 import logger from "./logger";
 import "dotenv/config";
 
@@ -177,7 +177,6 @@ export async function fullScrapeTioga() {
       will_send_email = false;
     }
   }
-  setTimeout(() => {}, 2000);
   if (will_send_email) {
     const bcc_recipients = await get_all_emails();
     const subject = "Tioga is possibly open soon!";
@@ -194,8 +193,8 @@ export async function fullScrapeTioga() {
       .map((line) => line.trim())
       .join("\n");
 
-    logger.info("Sending email to", bcc_recipients);
-    sendEmail(bcc_recipients, subject, contents);
+    logger.info(`Sending email to ${bcc_recipients}`);
+    sendEmailAsync(bcc_recipients, subject, contents);
   }
   const misc_data = {};
 

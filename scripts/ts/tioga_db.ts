@@ -89,7 +89,7 @@ export async function get_all_emails(): Promise<string[]> {
   const db = await sqlite3.open("./storage/tioga.db");
   const rows: any = await db.all(`SELECT ts, email FROM EmailList`);
   await db.close();
-  return rows;
+  return rows.map((row: any) => row.email);
 }
 
 async function most_recent_sent_email(): Promise<string> {
@@ -100,12 +100,11 @@ async function most_recent_sent_email(): Promise<string> {
             ORDER BY ts DESC
             LIMIT 1`);
   await db.close();
-  return rows;
+  return rows.length === 0 ? null : rows[0].ts;
 }
 
 export async function sent_email_this_year() {
   const ts = await most_recent_sent_email();
-  console.log("got ts", ts);
   if (ts === null) {
     return false;
   } else {
