@@ -1,38 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Pardon the hackiness. I just wanted to get something working quickly.
 
-## Getting Started
+See package.json for some common commands.
 
-First, run the development server:
+# Initial Setup
+- yarn build-scripts
+- yarn clear-and-backfill-history (creates database)
+- add a .env file in the storage/ folder with `GMAIL_USER, GMAIL_PASS, OPENAI_API_KEY`
+- yarn dev .. and things should work locally!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+# Deploying
+This is deployed on a tiny server with Dokku. It's small enough that `yarn build` is too slow, so that happens locally and then gets packaged up. You need to commit this to git to deploy.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## One time setup
+- dokku apps:create tioga
+- dokku letsencrypt:enable tioga
+- dokku storage:ensure-directory tioga
+- dokku storage:mount tioga /var/lib/dokku/data/storage/tioga:/usr/src/app/storage
+- dokku ps:restart tioga
+    - Only if the app already exists.. do this after adding storage
+- Add .env file at /var/lib/dokku/data/storage/tioga/.env
+- Then do this once: yarn clear-and-backfill-history
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Steps to deploy
+Then, the steps are:
+- Make changes
+- yarn build
+- commit the new .tar.gz file
+- git push dokku main:master
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+# Logs
+Logs sit in the storage/ directory. On the deployed machine, that's at /var/lib/dokku/data/storage/tioga/
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+# Cronjob
+- dokku has the cronjob set up via app.json
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
