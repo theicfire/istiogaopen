@@ -24,8 +24,7 @@ COPY next.tar.gz ./
 RUN tar -xzf next.tar.gz .next
 # RUN tar -xzf prebuilt_node_modules.tar.gz node_modules
 RUN yarn build-scripts
-
-COPY .env ./
+RUN ln -s ./storage/.env .env
 
 # Set the environment to production
 
