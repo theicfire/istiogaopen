@@ -36,7 +36,8 @@ export function sendEmailAsync(
   });
 }
 
+
 // let bccRecipients = ["chase.g.lambert@gmail.com"];
 // let subject = "This is a test email";
 // let contents = "This is the body of the email";
-// sendEmail(bccRecipients, subject, contents);
+// sendEmailAsync(bccRecipients, subject, contents);
