@@ -27,6 +27,7 @@ Then, the steps are:
 - yarn build
 - commit the new .tar.gz file
 - git push dokku main
+- git push (to also keep github updated/have a backup)
 
 # Logs
 Logs sit in the storage/ directory. On the deployed machine, that's at /var/lib/dokku/data/storage/tioga/
