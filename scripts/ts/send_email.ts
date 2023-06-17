@@ -20,8 +20,8 @@ export function sendEmailAsync(
   });
 
   let mailOptions = {
-    from: process.env.GMAIL_USER,
-    to: "", //empty if no recipient
+    from: `Chase Lambert <${process.env.GMAIL_USER}>`,
+    to: process.env.GMAIL_USER,
     bcc: bccRecipients,
     subject: subject,
     text: contents,
@@ -37,7 +37,7 @@ export function sendEmailAsync(
 }
 
 
-// let bccRecipients = ["chase.g.lambert@gmail.com"];
-// let subject = "This is a test email";
-// let contents = "This is the body of the email";
-// sendEmailAsync(bccRecipients, subject, contents);
+//  let bccRecipients = ["chase.g.lambert@gmail.com"];
+//  let subject = "This is a test email2";
+//  let contents = "This is the body of the email";
+//  sendEmailAsync(bccRecipients, subject, contents);
