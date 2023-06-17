@@ -184,10 +184,12 @@ export async function fullScrapeTioga() {
 
     Double check me, though: https://www.nps.gov/yose/planyourvisit/tioga.htm
 
-    Sorry if there's a bug, I'll fix it quickly. Maybe the AI mischaracterized the website, hmm.
+    Sorry if there's a bug, I'll fix it quickly. It's possible the AI mischaracterized the website.
 
     Love,
-    istiogaopen.com`;
+    istiogaopen.com
+
+    You can respond back directly to unsubscribe or to send some love to another random human :).`;
     contents = contents
       .split("\n")
       .map((line) => line.trim())
