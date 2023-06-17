@@ -34,3 +34,10 @@ Logs sit in the storage/ directory. On the deployed machine, that's at /var/lib/
 # Cronjob
 dokku has the cronjob set up via app.json
 
+# Sqlite database
+## Query the database:
+Simply run `sqlite3 /var/lib/dokku/data/storage/tioga/tioga.db`
+
+## Backup
+I periodically copy the file over to `Dropbox/code/tioga-backup`
+
