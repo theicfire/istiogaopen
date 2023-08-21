@@ -1,4 +1,4 @@
-import { scrapeConditionsPage } from "../scrape_tioga";
+import { scrapeConditionsPage } from "../scrape_pages";
 import logger from "../logger";
 import { promises as fs } from "fs";
 import path from "path";

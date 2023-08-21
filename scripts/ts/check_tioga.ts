@@ -16,7 +16,7 @@ import {
   extractTiogaSection,
   scrapePlowingPage,
   scrapeConditionsPage,
-} from "./scrape_tioga";
+} from "./scrape_pages";
 import { sendEmailAsync } from "./send_email";
 import logger from "./logger";
 import "dotenv/config";
