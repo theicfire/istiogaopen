@@ -5,7 +5,7 @@ import {
   getAllHistory,
   insertHistory,
   sentEmailThisYear,
-} from "./tioga_db";
+} from "./db";
 
 const historicalData = [
   {

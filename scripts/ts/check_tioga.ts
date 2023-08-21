@@ -11,7 +11,7 @@ import {
   insertHistory as insertPlowingHistory,
   sentEmailThisYear,
   insertConditionHistory,
-} from "./tioga_db";
+} from "./db";
 import {
   extractTiogaSection,
   scrapePlowingPage,
