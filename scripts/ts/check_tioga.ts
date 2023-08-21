@@ -8,11 +8,15 @@ import {
   getAllEmails,
   getAllHistory,
   getAllConditionsHistory,
-  insertHistory,
+  insertHistory as insertPlowingHistory,
   sentEmailThisYear,
   insertConditionHistory,
 } from "./tioga_db";
-import { extractTiogaSection, scrapeTioga, scrapeTioga2 } from "./scrape_tioga";
+import {
+  extractTiogaSection,
+  scrapePlowingPage,
+  scrapeConditionsPage,
+} from "./scrape_tioga";
 import { sendEmailAsync } from "./send_email";
 import logger from "./logger";
 import "dotenv/config";
@@ -156,8 +160,8 @@ export async function determineTiogaOpen(text: string): Promise<TiogaOpen> {
   return TiogaOpen.from_dict(res);
 }
 
-export async function fullScrapeTioga() {
-  const full_markdown = await scrapeTioga();
+export async function scrapeAndHandlePlowingPageUpdates() {
+  const full_markdown = await scrapePlowingPage();
   const tioga_contents = extractTiogaSection(full_markdown);
 
   const histories = await getAllHistory();
@@ -203,7 +207,7 @@ export async function fullScrapeTioga() {
   const misc_data = {};
 
   logger.info("Inserting history");
-  await insertHistory(
+  await insertPlowingHistory(
     full_markdown,
     tioga_contents,
     misc_data,
@@ -212,8 +216,8 @@ export async function fullScrapeTioga() {
   );
 }
 
-export async function scrapeConditions() {
-  const { foundHtml, isOpen } = await scrapeTioga2();
+export async function scrapeAndHandleConditionsPageUpdates() {
+  const { foundHtml, isOpen } = await scrapeConditionsPage();
   const histories = await getAllConditionsHistory();
   if (histories.length > 0) {
     const mostRecentHistory = histories[0];
@@ -229,9 +233,9 @@ export async function scrapeConditions() {
 
 if (require.main === module) {
   (async () => {
-    logger.info("====Let's Scrape Tioga!====");
+    logger.info("====Let's scrape the plowing and conditions pages!====");
     await createDb();
-    // await fullScrapeTioga();
-    await scrapeConditions();
+    await scrapeAndHandlePlowingPageUpdates();
+    await scrapeAndHandleConditionsPageUpdates();
   })();
 }

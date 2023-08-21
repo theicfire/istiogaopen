@@ -5,7 +5,7 @@ import RxExclamationTriangle from "@/components/svg/RxExclamationTriangle";
 import RxTwitter from "@/components/svg/RxTwitter";
 
 import React, { useState } from "react";
-import { get_all_history, HistoryRow } from "@/tioga_db";
+import { getAllHistory, PlowingHistoryRow } from "@/tioga_db";
 import RxCrossCircled from "@/components/svg/RxCrossCircled";
 import RxCheckCircled from "@/components/svg/RxCheckCircled";
 import Link from "next/link";
@@ -13,7 +13,7 @@ import { markdownToHtml } from "@/markdown_parse";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const HistoryEntry = ({ history }: { history: HistoryRow }) => {
+const HistoryEntry = ({ history }: { history: PlowingHistoryRow }) => {
   const result = JSON.parse(history.result);
   const dateString = new Date(history.ts * 1000).toLocaleDateString("en-US", {
     weekday: "long",
@@ -62,7 +62,11 @@ const HistoryEntry = ({ history }: { history: HistoryRow }) => {
   );
 };
 
-export default function History({ histories }: { histories: HistoryRow[] }) {
+export default function History({
+  histories,
+}: {
+  histories: PlowingHistoryRow[];
+}) {
   return (
     <main className={`${inter.className}`}>
       <div className="flex justify-center mx-4 my-2">
@@ -99,7 +103,7 @@ export async function getServerSideProps() {
   //   const res = await fetch(
   //     "https://jsonplaceholder.typicode.com/posts?_limit=5"
   //   );
-  const histories = await get_all_history();
+  const histories = await getAllHistory();
   return {
     props: {
       histories,

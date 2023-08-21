@@ -6,9 +6,9 @@ import React, { useState, useEffect } from "react";
 
 import Link from "next/link";
 import {
-  HistoryRow,
-  get_all_history,
-  get_all_conditions_history,
+  PlowingHistoryRow,
+  getAllHistory,
+  getAllConditionsHistory,
   ConditionsHistoryRow,
 } from "@/tioga_db";
 import { markdownToHtml } from "@/markdown_parse";
@@ -70,13 +70,13 @@ const TiogaText = () => (
 interface StatusWrapperProps {
   icon: React.ReactNode;
   text: string;
-  history: HistoryRow;
+  plowingHistory: PlowingHistoryRow;
 }
 
 const StatusWrapper: React.FC<StatusWrapperProps> = ({
   icon,
   text,
-  history,
+  plowingHistory,
 }) => (
   <div>
     <div className="my-4 flex w-full items-center justify-center text-sm">
@@ -88,7 +88,7 @@ const StatusWrapper: React.FC<StatusWrapperProps> = ({
         <RiDoubleQuotesLeft width={20} height={20} />
       </div>
       <div className="text-sm tioga-scraped-text">
-        {markdownToHtml(history.tioga_contents)}
+        {markdownToHtml(plowingHistory.tioga_contents)}
       </div>
     </div>
     <div className="text-sm flex w-full justify-end mb-6">
@@ -103,17 +103,29 @@ const StatusWrapper: React.FC<StatusWrapperProps> = ({
   </div>
 );
 
-const StatusOpenSoon = ({ history }: { history: HistoryRow }) => {
+const StatusOpenSoon = ({
+  plowingHistory,
+}: {
+  plowingHistory: PlowingHistoryRow;
+}) => {
   const icon = <RxExclamationTriangle width={30} height={30} stroke="yellow" />;
   const text = "No, but it will open soon.";
 
-  return <StatusWrapper icon={icon} text={text} history={history} />;
+  return (
+    <StatusWrapper icon={icon} text={text} plowingHistory={plowingHistory} />
+  );
 };
 
-const StatusClosed = ({ history }: { history: HistoryRow }) => {
+const StatusClosed = ({
+  plowingHistory,
+}: {
+  plowingHistory: PlowingHistoryRow;
+}) => {
   const icon = <RxCrossCircled width={30} height={30} stroke={"Red"} />;
   const text = "No, and it's unclear when it will open.";
-  return <StatusWrapper icon={icon} text={text} history={history} />;
+  return (
+    <StatusWrapper icon={icon} text={text} plowingHistory={plowingHistory} />
+  );
 };
 
 const StatusMaybeOpen = () => {
@@ -159,34 +171,36 @@ const StatusOpen = () => {
 };
 
 const CurrentStatus = ({
-  tiogaHistory,
+  plowingHistory,
   conditionsHistory,
 }: {
-  tiogaHistory: HistoryRow;
+  plowingHistory: PlowingHistoryRow;
   conditionsHistory: ConditionsHistoryRow;
 }) => {
-  const tiogaOpenResult = JSON.parse(tiogaHistory.result);
+  const plowingOpenResult = JSON.parse(plowingHistory.result);
 
   if (conditionsHistory.is_open) {
     return <StatusOpen />;
-  } else if (tiogaOpenResult.is_open) {
+  } else if (plowingOpenResult.is_open) {
     return <StatusMaybeOpen />;
-  } else if (tiogaOpenResult.is_open_soon) {
-    return <StatusOpenSoon history={tiogaHistory} />;
+  } else if (plowingOpenResult.is_open_soon) {
+    return <StatusOpenSoon plowingHistory={plowingHistory} />;
   } else {
-    return <StatusClosed history={tiogaHistory} />;
+    return <StatusClosed plowingHistory={plowingHistory} />;
   }
 };
 
 const DevToggler = ({
-  mostRecentHistory,
-  setMostRecentHistory,
+  mostRecentPlowingHistory,
+  setMostRecentPlowingHistory,
   mostRecentConditionsHistory,
   setMostRecentConditionsHistory,
 }: {
-  setMostRecentHistory: (history: HistoryRow) => void;
-  mostRecentHistory: HistoryRow;
-  setMostRecentConditionsHistory: (history: ConditionsHistoryRow) => void;
+  setMostRecentPlowingHistory: (plowingHistory: PlowingHistoryRow) => void;
+  mostRecentPlowingHistory: PlowingHistoryRow;
+  setMostRecentConditionsHistory: (
+    plowingHistory: ConditionsHistoryRow
+  ) => void;
   mostRecentConditionsHistory: ConditionsHistoryRow;
 }) => {
   const historyOpen = {
@@ -240,12 +254,12 @@ const DevToggler = ({
 
   useEffect(() => {
     setMostRecentConditionsHistory(conditionsHistoyOpen);
-    setMostRecentHistory(historyOpen);
+    setMostRecentPlowingHistory(historyOpen);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const historyStatus = ((history: HistoryRow): HistoryStatus => {
-    const result = JSON.parse(history.result);
+  const historyStatus = ((plowingHistory: PlowingHistoryRow): HistoryStatus => {
+    const result = JSON.parse(plowingHistory.result);
     if (result.is_open) {
       return HistoryStatus.open;
     } else if (result.is_open_soon) {
@@ -253,7 +267,7 @@ const DevToggler = ({
     } else {
       return HistoryStatus.closed;
     }
-  })(mostRecentHistory);
+  })(mostRecentPlowingHistory);
 
   const conditionsHistoryOpen = mostRecentConditionsHistory.is_open;
 
@@ -294,7 +308,7 @@ const DevToggler = ({
             <button
               className={historyStatus == HistoryStatus.open ? "font-bold" : ""}
               onClick={() => {
-                setMostRecentHistory(historyOpen);
+                setMostRecentPlowingHistory(historyOpen);
               }}
             >
               Open
@@ -306,7 +320,7 @@ const DevToggler = ({
                 historyStatus == HistoryStatus.closed ? "font-bold" : ""
               }
               onClick={() => {
-                setMostRecentHistory(historyClosed);
+                setMostRecentPlowingHistory(historyClosed);
               }}
             >
               Closed
@@ -318,7 +332,7 @@ const DevToggler = ({
                 historyStatus == HistoryStatus.open_soon ? "font-bold" : ""
               }
               onClick={() => {
-                setMostRecentHistory(historyOpenSoon);
+                setMostRecentPlowingHistory(historyOpenSoon);
               }}
             >
               Open Soon
@@ -337,18 +351,20 @@ function isValidEmail(email: string) {
 }
 
 export default function Home({
-  histories,
+  plowingHistories,
   conditionsHistories,
   showDevToggler,
 }: {
-  histories: HistoryRow[];
+  plowingHistories: PlowingHistoryRow[];
   conditionsHistories: ConditionsHistoryRow[];
   showDevToggler: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [formError, setFormError] = useState("");
   const [doneForm, setDoneForm] = useState(false);
-  const [mostRecentHistory, setMostRecentHistory] = useState(histories[0]);
+  const [mostRecentPlowingHistory, setMostRecentPlowingHistory] = useState(
+    plowingHistories[0]
+  );
   const [mostRecentConditionsHistory, setMostRecentConditionsHistory] =
     useState(conditionsHistories[0]);
 
@@ -385,8 +401,8 @@ export default function Home({
     <main className={`${inter.className}`}>
       {showDevToggler && (
         <DevToggler
-          setMostRecentHistory={setMostRecentHistory}
-          mostRecentHistory={mostRecentHistory}
+          setMostRecentPlowingHistory={setMostRecentPlowingHistory}
+          mostRecentPlowingHistory={mostRecentPlowingHistory}
           setMostRecentConditionsHistory={setMostRecentConditionsHistory}
           mostRecentConditionsHistory={mostRecentConditionsHistory}
         />
@@ -395,7 +411,7 @@ export default function Home({
         <div className="flex max-w-lg flex-col items-center">
           <h1 className="text-3xl">Is Tioga Road Open?</h1>
           <CurrentStatus
-            tiogaHistory={mostRecentHistory}
+            plowingHistory={mostRecentPlowingHistory}
             conditionsHistory={mostRecentConditionsHistory}
           />
 
@@ -461,11 +477,8 @@ export default function Home({
 }
 
 export async function getServerSideProps() {
-  //   const res = await fetch(
-  //     "https://jsonplaceholder.typicode.com/posts?_limit=5"
-  //   );
-  const histories = await get_all_history();
-  const conditionsHistories = await get_all_conditions_history();
+  const plowingHistories = await getAllHistory();
+  const conditionsHistories = await getAllConditionsHistory();
   // console.log(histories[0]);
 
   // const override_date = new Date(1990, 7, 22, 0, 0, 0, 0);
@@ -484,7 +497,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      histories,
+      plowingHistories,
       conditionsHistories,
       showDevToggler: SHOW_DEV_TOGGLER,
     },

@@ -1,4 +1,4 @@
-import { scrapeTioga2 } from "../scrape_tioga";
+import { scrapeConditionsPage } from "../scrape_tioga";
 import logger from "../logger";
 import { promises as fs } from "fs";
 import path from "path";
@@ -19,7 +19,7 @@ import path from "path";
 async function testOpen() {
   const fname = path.resolve(__dirname, "./conditions_open.html");
   const html = await fs.readFile(fname, "utf8");
-  const { isOpen } = await scrapeTioga2(html);
+  const { isOpen } = await scrapeConditionsPage(html);
   if (isOpen) {
     logger.info("PASS. Tioga is open");
   } else {
@@ -30,7 +30,7 @@ async function testOpen() {
 async function testClosed() {
   const fname = path.resolve(__dirname, "./conditions_closed.html");
   const html = await fs.readFile(fname, "utf8");
-  const { isOpen } = await scrapeTioga2(html);
+  const { isOpen } = await scrapeConditionsPage(html);
   if (!isOpen) {
     logger.info("PASS. Tioga is closed");
   } else {
@@ -41,7 +41,7 @@ async function testClosed() {
 async function testLive() {
   const fname = path.resolve(__dirname, "./conditions_closed.html");
   const html = await fs.readFile(fname, "utf8");
-  const { isOpen } = await scrapeTioga2(html);
+  const { isOpen } = await scrapeConditionsPage(html);
   if (isOpen) {
     console.log("Live test says Tioga is OPEN");
   } else {

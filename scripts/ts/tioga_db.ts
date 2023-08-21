@@ -88,7 +88,7 @@ export async function clearHistoryTable() {
   await db.close();
 }
 
-export interface HistoryRow {
+export interface PlowingHistoryRow {
   id: number;
   ts: number;
   full_markdown: string;
@@ -104,7 +104,7 @@ export interface ConditionsHistoryRow {
   is_open: number;
 }
 
-export async function getAllHistory(): Promise<HistoryRow[]> {
+export async function getAllHistory(): Promise<PlowingHistoryRow[]> {
   const db = await sqlite3.open("./storage/tioga.db");
   const rows: any = await db.all(`SELECT * FROM History ORDER BY ts DESC`);
   await db.close();

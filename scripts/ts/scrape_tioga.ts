@@ -34,13 +34,13 @@ export function extractTiogaSection(markdown: string): string {
   return tiogaSection.join("\n");
 }
 
-export async function scrapeTioga(): Promise<string> {
+export async function scrapePlowingPage(): Promise<string> {
   const URL = "https://www.nps.gov/yose/planyourvisit/tioga.htm";
   const markdown = await scrapeToMarkdown(URL);
   return markdown;
 }
 
-export async function scrapeTioga2(givenHtml?: string): Promise<{
+export async function scrapeConditionsPage(givenHtml?: string): Promise<{
   foundHtml: string;
   isOpen: boolean;
 }> {
@@ -72,7 +72,3 @@ export async function scrapeTioga2(givenHtml?: string): Promise<{
   // console.log("result", isOpen);
   return { foundHtml: $.html(tiogaElement), isOpen };
 }
-
-scrapeTioga2();
-
-// https://www.nps.gov/yose/planyourvisit/conditions.htm
