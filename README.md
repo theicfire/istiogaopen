@@ -53,3 +53,6 @@ I periodically copy the file over to `Dropbox/code/tioga-backup`
 # Testing
 - Run `yarn build-scripts && yarn test-scripts`. Look at the output -- the logging will tell you if there's a problem.
 - Additionally, you can also add `DEVELOPMENT_BUTTONS="True"` to the .env file to get some buttons to run the tests on the homepage. Restart the yarn server after doing this.
+
+# Monitoring
+- I use https://uptimerobot.com/ to monitor the site. It pings the site every 5 minutes (including the /health endpoint) and sends me an email if there are issues.
