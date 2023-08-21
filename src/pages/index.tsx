@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 
 import RiDoubleQuotesLeft from "@/components/svg/RiDoubleQuotesLeft";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Link from "next/link";
 import {
@@ -16,6 +16,9 @@ import RxCrossCircled from "@/components/svg/RxCrossCircled";
 import RxCheckCircled from "@/components/svg/RxCheckCircled";
 import RxExclamationTriangle from "@/components/svg/RxExclamationTriangle";
 import RxTwitter from "@/components/svg/RxTwitter";
+import { type } from "os";
+
+const SHOW_DEV_TOGGLER = process.env.DEVELOPMENT_BUTTONS === "True";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -65,26 +68,50 @@ const TiogaText = () => (
 interface StatusWrapperProps {
   icon: React.ReactNode;
   text: string;
+  history: HistoryRow;
 }
 
-const StatusWrapper: React.FC<StatusWrapperProps> = ({ icon, text }) => (
-  <div className="my-4 flex w-full items-center justify-center text-sm">
-    <div className="mr-4 flex ">{icon}</div>
-    <div className="flex">{text}</div>
+const StatusWrapper: React.FC<StatusWrapperProps> = ({
+  icon,
+  text,
+  history,
+}) => (
+  <div>
+    <div className="my-4 flex w-full items-center justify-center text-sm">
+      <div className="mr-4 flex ">{icon}</div>
+      <div className="flex">{text}</div>
+    </div>
+    <div className=" mt-4 mb-1 flex">
+      <div className="mr-2 text-6xl">
+        <RiDoubleQuotesLeft width={20} height={20} />
+      </div>
+      <div className="text-sm tioga-scraped-text">
+        {markdownToHtml(history.tioga_contents)}
+      </div>
+    </div>
+    <div className="text-sm flex w-full justify-end mb-6">
+      - The{" "}
+      <a
+        className="ml-1"
+        href="https://www.nps.gov/yose/planyourvisit/tioga.htm"
+      >
+        official Yosemite website
+      </a>
+    </div>
   </div>
 );
 
-const StatusOpenSoon = () => {
+const StatusOpenSoon = ({ history }: { history: HistoryRow }) => {
   const icon = <RxExclamationTriangle width={30} height={30} stroke="yellow" />;
   const text = "No, but it will open soon.";
 
-  return <StatusWrapper icon={icon} text={text} />;
+  return <StatusWrapper icon={icon} text={text} history={history} />;
 };
 
-const StatusClosed = () => {
+const StatusClosed = ({ history }: { history: HistoryRow }) => {
   const icon = <RxCrossCircled width={30} height={30} stroke={"Red"} />;
   const text = "No, and it's unclear when it will open.";
-  return <StatusWrapper icon={icon} text={text} />;
+  return <StatusWrapper icon={icon} text={text} history={history} />;
 };
 
 const StatusMaybeOpen = () => {
@@ -115,25 +142,187 @@ const StatusOpen = () => {
       <div className="flex">
         <div className="mr-4 flex ">{icon}</div>
         <div>
+          Yes! See{" "}
           <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">
-            https://www.nps.gov/yose/planyourvisit/conditions.htm
+            the official Yosemite website
           </a>
-          {" says that it's open, woo!"}
+          {" which says it's open."}
         </div>
       </div>
     </div>
   );
 };
 
-const CurrentStatus = ({ history }: { history: HistoryRow }) => {
-  const result = JSON.parse(history.result);
-  if (result.is_open) {
+const CurrentStatus = ({
+  tiogaHistory,
+  conditionsHistory,
+}: {
+  tiogaHistory: HistoryRow;
+  conditionsHistory: ConditionsHistoryRow;
+}) => {
+  const tiogaOpenResult = JSON.parse(tiogaHistory.result);
+
+  if (conditionsHistory.is_open) {
+    return <StatusOpen />;
+  } else if (tiogaOpenResult.is_open) {
     return <StatusMaybeOpen />;
-  } else if (result.is_open_soon) {
-    return <StatusOpenSoon />;
+  } else if (tiogaOpenResult.is_open_soon) {
+    return <StatusOpenSoon history={tiogaHistory} />;
   } else {
-    return <StatusClosed />;
+    return <StatusClosed history={tiogaHistory} />;
   }
+};
+
+const DevToggler = ({
+  mostRecentHistory,
+  setMostRecentHistory,
+  mostRecentConditionsHistory,
+  setMostRecentConditionsHistory,
+}: {
+  setMostRecentHistory: (history: HistoryRow) => void;
+  mostRecentHistory: HistoryRow;
+  setMostRecentConditionsHistory: (history: ConditionsHistoryRow) => void;
+  mostRecentConditionsHistory: ConditionsHistoryRow;
+}) => {
+  const historyOpen = {
+    result: `{"is_open":true,"is_open_soon":true,"hardcode_override":true}`,
+    id: 0,
+    ts: 0,
+    full_markdown: "",
+    tioga_contents: "Oh baby, we plowed it!",
+    misc_data: "",
+    sent_email: 0,
+  };
+  const historyClosed = {
+    result: `{"is_open":false,"is_open_soon":false,"hardcode_override":true}`,
+    id: 0,
+    ts: 0,
+    full_markdown: "",
+    tioga_contents: "Oh gosh, it's closed, not yet plowed",
+    misc_data: "",
+    sent_email: 0,
+  };
+  const historyOpenSoon = {
+    result: `{"is_open":false,"is_open_soon":true,"hardcode_override":true}`,
+    id: 0,
+    ts: 0,
+    full_markdown: "",
+    tioga_contents: "Alllmost there!",
+    misc_data: "",
+    sent_email: 0,
+  };
+  const conditionsHistoyOpen = {
+    is_open: 1,
+    id: 0,
+    ts: 0,
+    found_html: "",
+  };
+  const conditionsHistoyClosed = {
+    is_open: 0,
+    id: 0,
+    ts: 0,
+    found_html: "",
+  };
+  // Show two sets of links that are clickable. One for the tioga road and one for the conditions.
+  // When clicked, it will update the current status to that.
+  // It will also make the selected one bold.
+
+  enum HistoryStatus {
+    open = "open",
+    closed = "closed",
+    open_soon = "open_soon",
+  }
+
+  useEffect(() => {
+    setMostRecentConditionsHistory(conditionsHistoyOpen);
+    setMostRecentHistory(historyOpen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const historyStatus = ((history: HistoryRow): HistoryStatus => {
+    const result = JSON.parse(history.result);
+    if (result.is_open) {
+      return HistoryStatus.open;
+    } else if (result.is_open_soon) {
+      return HistoryStatus.open_soon;
+    } else {
+      return HistoryStatus.closed;
+    }
+  })(mostRecentHistory);
+
+  const conditionsHistoryOpen = mostRecentConditionsHistory.is_open;
+
+  return (
+    <div className="flex justify-end w-full">
+      <div className="flex flex-col border-2 p-4 border-sky-400">
+        <div className="underline mb-2">
+          Dev mode: play around with statuses
+        </div>
+
+        <div className="flex text-xs">
+          <div className="mr-4 italic">Conditions Page:</div>
+          <div className="mr-4">
+            <button
+              className={`${conditionsHistoryOpen ? "font-bold" : ""}`}
+              onClick={() => {
+                setMostRecentConditionsHistory(conditionsHistoyOpen);
+              }}
+            >
+              Conditions Open
+            </button>
+          </div>
+          <div className="mr-4">
+            <button
+              className={`${!conditionsHistoryOpen ? "font-bold" : ""}`}
+              onClick={() => {
+                setMostRecentConditionsHistory(conditionsHistoyClosed);
+              }}
+            >
+              Conditions Closed
+            </button>
+          </div>
+        </div>
+
+        <div className="flex text-xs">
+          <div className="mr-4 italic">Tioga Page:</div>
+          <div className="mr-4">
+            <button
+              className={historyStatus == HistoryStatus.open ? "font-bold" : ""}
+              onClick={() => {
+                setMostRecentHistory(historyOpen);
+              }}
+            >
+              Open
+            </button>
+          </div>
+          <div className="mr-4">
+            <button
+              className={
+                historyStatus == HistoryStatus.closed ? "font-bold" : ""
+              }
+              onClick={() => {
+                setMostRecentHistory(historyClosed);
+              }}
+            >
+              Closed
+            </button>
+          </div>
+          <div className="mr-4">
+            <button
+              className={
+                historyStatus == HistoryStatus.open_soon ? "font-bold" : ""
+              }
+              onClick={() => {
+                setMostRecentHistory(historyOpenSoon);
+              }}
+            >
+              Open Soon
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 function isValidEmail(email: string) {
@@ -145,15 +334,18 @@ function isValidEmail(email: string) {
 export default function Home({
   histories,
   conditionsHistories,
+  showDevToggler,
 }: {
   histories: HistoryRow[];
   conditionsHistories: ConditionsHistoryRow[];
+  showDevToggler: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [formError, setFormError] = useState("");
   const [doneForm, setDoneForm] = useState(false);
-  const mostRecentHistory = histories[0];
-  const mostRecentConditionsHistory = conditionsHistories[0];
+  const [mostRecentHistory, setMostRecentHistory] = useState(histories[0]);
+  const [mostRecentConditionsHistory, setMostRecentConditionsHistory] =
+    useState(conditionsHistories[0]);
 
   const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
@@ -186,33 +378,21 @@ export default function Home({
     : "border-white focus:border-blue-500";
   return (
     <main className={`${inter.className}`}>
+      {showDevToggler && (
+        <DevToggler
+          setMostRecentHistory={setMostRecentHistory}
+          mostRecentHistory={mostRecentHistory}
+          setMostRecentConditionsHistory={setMostRecentConditionsHistory}
+          mostRecentConditionsHistory={mostRecentConditionsHistory}
+        />
+      )}
       <div className="flex justify-center m-4">
         <div className="flex max-w-lg flex-col items-center">
           <h1 className="text-3xl">Is Tioga Road Open?</h1>
-          {mostRecentConditionsHistory.is_open ? (
-            <StatusOpen />
-          ) : (
-            <div>
-              <CurrentStatus history={mostRecentHistory} />
-              <div className=" mt-4 mb-1 flex">
-                <div className="mr-2 text-6xl">
-                  <RiDoubleQuotesLeft width={20} height={20} />
-                </div>
-                <div className="text-sm tioga-scraped-text">
-                  {markdownToHtml(mostRecentHistory.tioga_contents)}
-                </div>
-              </div>
-              <div className="text-sm flex w-full justify-end mb-6">
-                - The{" "}
-                <a
-                  className="ml-1"
-                  href="https://www.nps.gov/yose/planyourvisit/tioga.htm"
-                >
-                  official Yosemite website
-                </a>
-              </div>
-            </div>
-          )}
+          <CurrentStatus
+            tiogaHistory={mostRecentHistory}
+            conditionsHistory={mostRecentConditionsHistory}
+          />
 
           <h1 className="text-3xl">Get Notified in 2024</h1>
           <div className="text-sm">
@@ -281,7 +461,7 @@ export async function getServerSideProps() {
   //   );
   const histories = await get_all_history();
   const conditionsHistories = await get_all_conditions_history();
-  // console.log(histories[0]);
+  console.log(histories[0]);
 
   // const override_date = new Date(1990, 7, 22, 0, 0, 0, 0);
   // if (new Date() > override_date) {
@@ -301,6 +481,7 @@ export async function getServerSideProps() {
     props: {
       histories,
       conditionsHistories,
+      showDevToggler: SHOW_DEV_TOGGLER,
     },
   };
 }
