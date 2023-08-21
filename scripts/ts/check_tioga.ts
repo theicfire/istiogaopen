@@ -168,7 +168,7 @@ export async function scrapeAndHandlePlowingPageUpdates() {
   if (histories.length > 0) {
     const mostRecentHistory = histories[0];
     if (mostRecentHistory.tioga_contents === tioga_contents) {
-      logger.info("Tioga contents have not changed, quitting");
+      logger.info("Plowing page has not changed, skipping");
       return;
     }
   }
@@ -222,7 +222,7 @@ export async function scrapeAndHandleConditionsPageUpdates() {
   if (histories.length > 0) {
     const mostRecentHistory = histories[0];
     if (!!mostRecentHistory.is_open === isOpen) {
-      logger.info("Conditions website has not changed, quitting");
+      logger.info("Conditions website has not changed, skipping");
       return;
     }
   }

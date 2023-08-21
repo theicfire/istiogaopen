@@ -8,9 +8,9 @@
     "build-scripts": "tsc -p scripts/ts/tsconfig.json",
     "start": "next start",
     "lint": "next lint",
-    "check-tioga": "node scripts/ts/check_tioga.js",
-    "test-scripts": "node scripts/ts/tests/check_conditions.test.js",
-    "clear-and-backfill-history": "node scripts/ts/history_backfill.js"
+    "check-tioga": "yarn build-scripts && node scripts/ts/check_tioga.js",
+    "test-scripts": "yarn build-scripts && node scripts/ts/tests/check_conditions.test.js",
+    "clear-and-backfill-history": "yarn build-scripts && node scripts/ts/history_backfill.js"
   },
   "dependencies": {
     "@types/node": "20.2.5",
