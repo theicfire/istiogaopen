@@ -101,7 +101,7 @@ class LLMChain {
   }
 }
 
-function decode_json_blob(str: string) {
+function decodeJsonBlob(str: string) {
   let startIdx = str.indexOf("{");
   if (startIdx === -1) return null;
 
@@ -143,7 +143,7 @@ class TiogaOpen {
   }
 }
 
-export async function determine_tioga_open(text: string): Promise<TiogaOpen> {
+export async function determineTiogaOpen(text: string): Promise<TiogaOpen> {
   const chain = new LLMChain();
   let result = await chain.run(SYSTEM_PROMPT + text);
   logger.info(`RESULT1: ${result}`);
@@ -152,7 +152,7 @@ export async function determine_tioga_open(text: string): Promise<TiogaOpen> {
     throw new Error("Could not get result from LLM chain");
   }
   logger.info(`RESULT2, to decode: ${result}`);
-  const res = decode_json_blob(result);
+  const res = decodeJsonBlob(result);
   return TiogaOpen.from_dict(res);
 }
 
@@ -170,7 +170,7 @@ export async function fullScrapeTioga() {
   }
   logger.info(`Tioga contents: ${tioga_contents}`);
 
-  const result = await determine_tioga_open(tioga_contents);
+  const result = await determineTiogaOpen(tioga_contents);
   logger.info(`Result: ${JSON.stringify(result, null, 2)}`);
   let will_send_email = result.is_open || result.is_open_soon;
   if (will_send_email) {

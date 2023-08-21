@@ -1,4 +1,4 @@
-import { determine_tioga_open } from "./check_tioga";
+import { determineTiogaOpen } from "./check_tioga";
 import {
   clearHistoryTable,
   createDb,
@@ -74,7 +74,7 @@ if (require.main === module) {
     await Promise.all(
       historicalData.map(async ({ date, text }) => {
         console.log("Query chatgpt for info with date", date);
-        const result = await determine_tioga_open(text);
+        const result = await determineTiogaOpen(text);
         console.log("Insert for date", date);
         const misc_data = {};
         const will_send_email = false;

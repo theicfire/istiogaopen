@@ -1,4 +1,4 @@
-import { determine_tioga_open } from "../check_tioga";
+import { determineTiogaOpen } from "../check_tioga";
 
 import logger from "../logger";
 
@@ -56,7 +56,7 @@ function resultMatches(
 async function runTests() {
   testMessages.forEach(async (msg) => {
     logger.info("run query");
-    const result = await determine_tioga_open(msg.query);
+    const result = await determineTiogaOpen(msg.query);
     if (resultMatches(result, msg.answer)) {
       logger.info(`PASS. ${JSON.stringify(msg, null, 2)}`);
     } else {
