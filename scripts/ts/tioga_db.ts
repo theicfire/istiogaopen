@@ -1,6 +1,6 @@
 import { AsyncDatabase as sqlite3 } from "promised-sqlite3";
 
-export async function create_db() {
+export async function createDb() {
   const db = await sqlite3.open("./storage/tioga.db");
 
   await db.run(`
@@ -33,7 +33,7 @@ export async function create_db() {
   await db.close();
 }
 
-export async function insert_condition_history(
+export async function insertConditionHistory(
   foundHtml: string,
   isOpen: boolean
 ) {
@@ -45,7 +45,7 @@ export async function insert_condition_history(
   await db.close();
 }
 
-export async function insert_history(
+export async function insertHistory(
   full_markdown: string,
   tioga_contents: string,
   misc_data: object,
@@ -104,14 +104,14 @@ export interface ConditionsHistoryRow {
   is_open: number;
 }
 
-export async function get_all_history(): Promise<HistoryRow[]> {
+export async function getAllHistory(): Promise<HistoryRow[]> {
   const db = await sqlite3.open("./storage/tioga.db");
   const rows: any = await db.all(`SELECT * FROM History ORDER BY ts DESC`);
   await db.close();
   return rows;
 }
 
-export async function get_all_conditions_history(): Promise<
+export async function getAllConditionsHistory(): Promise<
   ConditionsHistoryRow[]
 > {
   const db = await sqlite3.open("./storage/tioga.db");
@@ -122,14 +122,14 @@ export async function get_all_conditions_history(): Promise<
   return rows;
 }
 
-export async function get_all_emails(): Promise<string[]> {
+export async function getAllEmails(): Promise<string[]> {
   const db = await sqlite3.open("./storage/tioga.db");
   const rows: any = await db.all(`SELECT ts, email FROM EmailList`);
   await db.close();
   return rows.map((row: any) => row.email);
 }
 
-async function most_recent_sent_email(): Promise<string> {
+async function mostRecentSentEmail(): Promise<string> {
   const db = await sqlite3.open("./storage/tioga.db");
   const rows: any = await db.all(`
               SELECT ts FROM History
@@ -140,8 +140,8 @@ async function most_recent_sent_email(): Promise<string> {
   return rows.length === 0 ? null : rows[0].ts;
 }
 
-export async function sent_email_this_year() {
-  const ts = await most_recent_sent_email();
+export async function sentEmailThisYear() {
+  const ts = await mostRecentSentEmail();
   if (ts === null) {
     return false;
   } else {
@@ -151,7 +151,7 @@ export async function sent_email_this_year() {
   }
 }
 
-export async function insert_email(email: string, ip_address: string) {
+export async function insertEmail(email: string, ip_address: string) {
   const db = await sqlite3.open("./storage/tioga.db");
 
   await db.run(

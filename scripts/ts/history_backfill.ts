@@ -1,10 +1,10 @@
 import { determine_tioga_open } from "./check_tioga";
 import {
   clearHistoryTable,
-  create_db,
-  get_all_history,
-  insert_history,
-  sent_email_this_year,
+  createDb,
+  getAllHistory,
+  insertHistory,
+  sentEmailThisYear,
 } from "./tioga_db";
 
 const historicalData = [
@@ -68,7 +68,7 @@ _Tioga Road is typically open to vehicles from late May or June until sometime i
 
 if (require.main === module) {
   (async () => {
-    await create_db();
+    await createDb();
     await clearHistoryTable();
 
     await Promise.all(
@@ -79,18 +79,11 @@ if (require.main === module) {
         const misc_data = {};
         const will_send_email = false;
         const ts = new Date(date).getTime() / 1000;
-        await insert_history(
-          text,
-          text,
-          misc_data,
-          result,
-          will_send_email,
-          ts
-        );
+        await insertHistory(text, text, misc_data, result, will_send_email, ts);
       })
     );
 
-    const histories = await get_all_history();
+    const histories = await getAllHistory();
     console.log("Histories", histories);
   })();
 }

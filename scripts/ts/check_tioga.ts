@@ -4,13 +4,13 @@ import {
   ChatCompletionRequestMessageRoleEnum,
 } from "openai";
 import {
-  create_db,
-  get_all_emails,
-  get_all_history,
-  get_all_conditions_history,
-  insert_history,
-  sent_email_this_year,
-  insert_condition_history,
+  createDb,
+  getAllEmails,
+  getAllHistory,
+  getAllConditionsHistory,
+  insertHistory,
+  sentEmailThisYear,
+  insertConditionHistory,
 } from "./tioga_db";
 import { extractTiogaSection, scrapeTioga, scrapeTioga2 } from "./scrape_tioga";
 import { sendEmailAsync } from "./send_email";
@@ -160,7 +160,7 @@ export async function fullScrapeTioga() {
   const full_markdown = await scrapeTioga();
   const tioga_contents = extractTiogaSection(full_markdown);
 
-  const histories = await get_all_history();
+  const histories = await getAllHistory();
   if (histories.length > 0) {
     const mostRecentHistory = histories[0];
     if (mostRecentHistory.tioga_contents === tioga_contents) {
@@ -174,13 +174,13 @@ export async function fullScrapeTioga() {
   logger.info(`Result: ${JSON.stringify(result, null, 2)}`);
   let will_send_email = result.is_open || result.is_open_soon;
   if (will_send_email) {
-    if (await sent_email_this_year()) {
+    if (await sentEmailThisYear()) {
       logger.info("Already sent email this year, not sending again");
       will_send_email = false;
     }
   }
   if (will_send_email) {
-    const bcc_recipients = await get_all_emails();
+    const bcc_recipients = await getAllEmails();
     const subject = "Tioga is possibly open soon!";
     let contents = `I *think* Tioga road will be opening soon!!
 
@@ -203,7 +203,7 @@ export async function fullScrapeTioga() {
   const misc_data = {};
 
   logger.info("Inserting history");
-  await insert_history(
+  await insertHistory(
     full_markdown,
     tioga_contents,
     misc_data,
@@ -214,7 +214,7 @@ export async function fullScrapeTioga() {
 
 export async function scrapeConditions() {
   const { foundHtml, isOpen } = await scrapeTioga2();
-  const histories = await get_all_conditions_history();
+  const histories = await getAllConditionsHistory();
   if (histories.length > 0) {
     const mostRecentHistory = histories[0];
     if (!!mostRecentHistory.is_open === isOpen) {
@@ -224,13 +224,13 @@ export async function scrapeConditions() {
   }
 
   console.log("After scraping the conditions website, isOpen is: ", isOpen);
-  await insert_condition_history(foundHtml, isOpen);
+  await insertConditionHistory(foundHtml, isOpen);
 }
 
 if (require.main === module) {
   (async () => {
     logger.info("====Let's Scrape Tioga!====");
-    await create_db();
+    await createDb();
     // await fullScrapeTioga();
     await scrapeConditions();
   })();

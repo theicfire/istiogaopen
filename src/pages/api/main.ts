@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { create_db, get_all_emails, insert_email } from "@/tioga_db";
+import { createDb, get_all_emails, insert_email } from "@/tioga_db";
 import { toErrorWithMessage } from "@/errorUtil";
 import logger from "@/logger";
 
@@ -22,7 +22,7 @@ export default async function insertEmail(
     ip_address = JSON.stringify(raw_ip);
   }
 
-  create_db();
+  createDb();
   const data = JSON.parse(req.body);
   const email = data.email;
   logger.info(`Attempt insert email: ${email}, ip: ${ip_address}`);
