@@ -25,10 +25,12 @@ const inter = Inter({ subsets: ["latin"] });
 const WorksText = () => (
   <div className="whitespace-pre-line text-sm">
     I scrape the two official Yosemite websites (
-    <a href="https://www.nps.gov/yose/planyourvisit/tioga.htm">first</a>
+    <a href="https://www.nps.gov/yose/planyourvisit/tioga.htm">plowing page</a>
     {", "}
-    <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">second</a>)
-    a few times a day. Whenever there are changes, I run some analysis through
+    <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">
+      conditions page
+    </a>
+    ) a few times a day. Whenever there are changes, I run some analysis through
     ChatGPT to determine if the road is open or not. The code is on{" "}
     <a href="https://github.com/theicfire/istiogaopen">Github</a>. I track the{" "}
     <Link href="/history">history of the Yosemite page</Link> updates if you’re
@@ -122,13 +124,16 @@ const StatusMaybeOpen = () => {
         <div className="mr-4 flex ">{icon}</div>
         <div>
           {
-            "Hmm. One website says it is open and the other says it's not. Look at "
+            "Hmm. One website says it is open and the other says it's not. Look at the "
           }
           <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">
-            this
+            conditions page
           </a>
-          {" and "}
-          <a href="https://www.nps.gov/yose/planyourvisit/tioga.htm">this</a>
+          {" and the "}
+          <a href="https://www.nps.gov/yose/planyourvisit/tioga.htm">
+            plowing page
+          </a>
+          .
         </div>
       </div>
     </div>
@@ -146,7 +151,7 @@ const StatusOpen = () => {
           <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">
             the official Yosemite website
           </a>
-          {" which says it's open."}
+          {", which says it's open."}
         </div>
       </div>
     </div>
@@ -284,7 +289,7 @@ const DevToggler = ({
         </div>
 
         <div className="flex text-xs">
-          <div className="mr-4 italic">Tioga Page:</div>
+          <div className="mr-4 italic">Plowing Page:</div>
           <div className="mr-4">
             <button
               className={historyStatus == HistoryStatus.open ? "font-bold" : ""}
@@ -461,7 +466,7 @@ export async function getServerSideProps() {
   //   );
   const histories = await get_all_history();
   const conditionsHistories = await get_all_conditions_history();
-  console.log(histories[0]);
+  // console.log(histories[0]);
 
   // const override_date = new Date(1990, 7, 22, 0, 0, 0, 0);
   // if (new Date() > override_date) {
