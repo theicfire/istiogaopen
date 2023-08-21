@@ -76,14 +76,14 @@ export default function History({
               {"<"} Home
             </Link>
           </div>
-          <div className="text-3xl">Tioga Website History</div>
+          <div className="text-3xl">Tioga Plowing Website History</div>
           <div className="text-sm">
             A history of the updates from the
             <a
               className="mx-1"
               href="https://www.nps.gov/yose/planyourvisit/tioga.htm"
             >
-              official Yosemite website
+              Yosemite plowing page
             </a>
           </div>
           <div className="whitespace-pre-line text-sm">

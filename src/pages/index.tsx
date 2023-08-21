@@ -33,7 +33,7 @@ const WorksText = () => (
     ) a few times a day. Whenever there are changes, I run some analysis through
     ChatGPT to determine if the road is open or not. The code is on{" "}
     <a href="https://github.com/theicfire/istiogaopen">Github</a>. I track the{" "}
-    <Link href="/history">history of the Yosemite page</Link> updates if you’re
+    <Link href="/history">history of the plowing page</Link> updates if you’re
     curious.
     {"\n\n"}
     Any changes that are not reflected on that Yosemite website will not show up
