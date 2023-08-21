@@ -1,1 +1,0 @@
-../scripts/ts/db.ts

@@ -1,9 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { createDb, get_all_emails, insert_email } from "@/tioga_db";
 import { toErrorWithMessage } from "@/errorUtil";
 import logger from "@/logger";
+import * as db from "@/tioga_db";
 
 type Data = {
   done: string;
@@ -22,12 +22,12 @@ export default async function insertEmail(
     ip_address = JSON.stringify(raw_ip);
   }
 
-  createDb();
+  db.createDb();
   const data = JSON.parse(req.body);
   const email = data.email;
   logger.info(`Attempt insert email: ${email}, ip: ${ip_address}`);
   try {
-    await insert_email(email, ip_address);
+    await db.insertEmail(email, ip_address);
   } catch (e: any) {
     const err = toErrorWithMessage(e);
     if (err.message.includes("UNIQUE constraint failed")) {

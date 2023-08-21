@@ -11,7 +11,9 @@ import {
   insertHistory as insertPlowingHistory,
   sentEmailThisYear,
   insertConditionHistory,
-} from "./db";
+  updateHealthCheck,
+  HealthCheckStatus,
+} from "./tioga_db";
 import {
   extractTiogaSection,
   scrapePlowingPage,
@@ -234,8 +236,14 @@ export async function scrapeAndHandleConditionsPageUpdates() {
 if (require.main === module) {
   (async () => {
     logger.info("====Let's scrape the plowing and conditions pages!====");
-    await createDb();
-    await scrapeAndHandlePlowingPageUpdates();
-    await scrapeAndHandleConditionsPageUpdates();
+    try {
+      await createDb();
+      await scrapeAndHandlePlowingPageUpdates();
+      await scrapeAndHandleConditionsPageUpdates();
+      updateHealthCheck(HealthCheckStatus.OK);
+    } catch (e) {
+      updateHealthCheck(HealthCheckStatus.ERROR);
+      console.log("Error", e);
+    }
   })();
 }

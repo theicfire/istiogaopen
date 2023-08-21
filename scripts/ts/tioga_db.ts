@@ -30,7 +30,37 @@ export async function createDb() {
                 ip_address TEXT
             )`);
 
+  await db.run(`
+           CREATE TABLE IF NOT EXISTS HealthCheck (
+                single_row INTEGER DEFAULT 1 UNIQUE,
+                ts INTEGER,
+                status TEXT
+            )`);
+
   await db.close();
+}
+
+export enum HealthCheckStatus {
+  OK = "OK",
+  ERROR = "ERROR",
+}
+
+export async function updateHealthCheck(status: HealthCheckStatus) {
+  const db = await sqlite3.open("./storage/tioga.db");
+  const ts = Math.floor(Date.now() / 1000);
+  await db.run(
+    `INSERT INTO HealthCheck (ts, status)
+    VALUES (?, ?)
+    ON CONFLICT(single_row) DO UPDATE SET ts = ?, status = ?`,
+    [ts, status, ts, status]
+  );
+}
+
+export async function getHealthCheck(): Promise<HealthCheckRow> {
+  const db = await sqlite3.open("./storage/tioga.db");
+  const rows: any = await db.all(`SELECT * FROM HealthCheck`);
+  await db.close();
+  return rows[0];
 }
 
 export async function insertConditionHistory(
@@ -86,6 +116,12 @@ export async function clearHistoryTable() {
   const db = await sqlite3.open("./storage/tioga.db");
   await db.run(`DELETE FROM History`);
   await db.close();
+}
+
+export interface HealthCheckRow {
+  id: number;
+  ts: number;
+  status: HealthCheckStatus;
 }
 
 export interface PlowingHistoryRow {
