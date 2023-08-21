@@ -15,6 +15,14 @@ export async function create_db() {
             )`);
 
   await db.run(`
+            CREATE TABLE IF NOT EXISTS ConditionsHistory (
+                id INTEGER PRIMARY KEY,
+                ts INTEGER DEFAULT (strftime('%s', 'now')),
+                found_html TEXT,
+                is_open INTEGER DEFAULT 0
+            )`);
+
+  await db.run(`
             CREATE TABLE IF NOT EXISTS EmailList (
                 id INTEGER PRIMARY KEY,
                 ts INTEGER DEFAULT (strftime('%s', 'now')),
@@ -22,6 +30,18 @@ export async function create_db() {
                 ip_address TEXT
             )`);
 
+  await db.close();
+}
+
+export async function insert_condition_history(
+  foundHtml: string,
+  isOpen: boolean
+) {
+  const db = await sqlite3.open("./storage/tioga.db");
+  const query = `
+        INSERT INTO ConditionsHistory (found_html, is_open)
+        VALUES (?, ?)`;
+  await db.run(query, [foundHtml, isOpen ? 1 : 0]);
   await db.close();
 }
 
@@ -77,10 +97,27 @@ export interface HistoryRow {
   result: string;
   sent_email: number;
 }
+export interface ConditionsHistoryRow {
+  id: number;
+  ts: number;
+  found_html: string;
+  is_open: number;
+}
 
 export async function get_all_history(): Promise<HistoryRow[]> {
   const db = await sqlite3.open("./storage/tioga.db");
   const rows: any = await db.all(`SELECT * FROM History ORDER BY ts DESC`);
+  await db.close();
+  return rows;
+}
+
+export async function get_all_conditions_history(): Promise<
+  ConditionsHistoryRow[]
+> {
+  const db = await sqlite3.open("./storage/tioga.db");
+  const rows: any = await db.all(
+    `SELECT * FROM ConditionsHistory ORDER BY ts DESC`
+  );
   await db.close();
   return rows;
 }

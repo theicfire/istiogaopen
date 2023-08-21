@@ -1,5 +1,6 @@
-import { determine_tioga_open } from "./check_tioga";
-import logger from "./logger";
+import { determine_tioga_open } from "../check_tioga";
+
+import logger from "../logger";
 
 const testMessages = [
   {

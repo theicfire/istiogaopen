@@ -7,10 +7,12 @@ import {
   create_db,
   get_all_emails,
   get_all_history,
+  get_all_conditions_history,
   insert_history,
   sent_email_this_year,
+  insert_condition_history,
 } from "./tioga_db";
-import { extractTiogaSection, scrapeTioga } from "./scrape_tioga";
+import { extractTiogaSection, scrapeTioga, scrapeTioga2 } from "./scrape_tioga";
 import { sendEmailAsync } from "./send_email";
 import logger from "./logger";
 import "dotenv/config";
@@ -155,16 +157,16 @@ export async function determine_tioga_open(text: string): Promise<TiogaOpen> {
 }
 
 export async function fullScrapeTioga() {
-  logger.info("====Let's Scrape Tioga!====");
-  await create_db();
   const full_markdown = await scrapeTioga();
   const tioga_contents = extractTiogaSection(full_markdown);
 
   const histories = await get_all_history();
-  const mostRecentHistory = histories[0];
-  if (mostRecentHistory.tioga_contents === tioga_contents) {
-    logger.info("Tioga contents have not changed, quitting");
-    return;
+  if (histories.length > 0) {
+    const mostRecentHistory = histories[0];
+    if (mostRecentHistory.tioga_contents === tioga_contents) {
+      logger.info("Tioga contents have not changed, quitting");
+      return;
+    }
   }
   logger.info(`Tioga contents: ${tioga_contents}`);
 
@@ -210,8 +212,26 @@ export async function fullScrapeTioga() {
   );
 }
 
+export async function scrapeConditions() {
+  const { foundHtml, isOpen } = await scrapeTioga2();
+  const histories = await get_all_conditions_history();
+  if (histories.length > 0) {
+    const mostRecentHistory = histories[0];
+    if (!!mostRecentHistory.is_open === isOpen) {
+      logger.info("Conditions website has not changed, quitting");
+      return;
+    }
+  }
+
+  console.log("After scraping the conditions website, isOpen is: ", isOpen);
+  await insert_condition_history(foundHtml, isOpen);
+}
+
 if (require.main === module) {
   (async () => {
-    await fullScrapeTioga();
+    logger.info("====Let's Scrape Tioga!====");
+    await create_db();
+    // await fullScrapeTioga();
+    await scrapeConditions();
   })();
 }

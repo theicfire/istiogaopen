@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "check-tioga": "node scripts/ts/check_tioga.js",
-    "test-check-tioga": "node scripts/ts/check_tioga.test.js",
+    "test-scripts": "node scripts/ts/tests/check_conditions.test.js",
     "clear-and-backfill-history": "node scripts/ts/history_backfill.js"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
     "@types/winston": "^2.4.4",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.1.4",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",

@@ -5,7 +5,12 @@ import RiDoubleQuotesLeft from "@/components/svg/RiDoubleQuotesLeft";
 import React, { useState } from "react";
 
 import Link from "next/link";
-import { HistoryRow, get_all_history } from "@/tioga_db";
+import {
+  HistoryRow,
+  get_all_history,
+  get_all_conditions_history,
+  ConditionsHistoryRow,
+} from "@/tioga_db";
 import { markdownToHtml } from "@/markdown_parse";
 import RxCrossCircled from "@/components/svg/RxCrossCircled";
 import RxCheckCircled from "@/components/svg/RxCheckCircled";
@@ -16,10 +21,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 const WorksText = () => (
   <div className="whitespace-pre-line text-sm">
-    I scrape the{" "}
-    <a href="https://www.nps.gov/yose/planyourvisit/tioga.htm">
-      official Yosemite website
-    </a>{" "}
+    I scrape the two official Yosemite websites (
+    <a href="https://www.nps.gov/yose/planyourvisit/tioga.htm">first</a>
+    {", "}
+    <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">second</a>)
     a few times a day. Whenever there are changes, I run some analysis through
     ChatGPT to determine if the road is open or not. The code is on{" "}
     <a href="https://github.com/theicfire/istiogaopen">Github</a>. I track the{" "}
@@ -63,7 +68,7 @@ interface StatusWrapperProps {
 }
 
 const StatusWrapper: React.FC<StatusWrapperProps> = ({ icon, text }) => (
-  <div className="my-4 flex w-60 items-center text-sm">
+  <div className="my-4 flex w-full items-center justify-center text-sm">
     <div className="mr-4 flex ">{icon}</div>
     <div className="flex">{text}</div>
   </div>
@@ -82,16 +87,48 @@ const StatusClosed = () => {
   return <StatusWrapper icon={icon} text={text} />;
 };
 
+const StatusMaybeOpen = () => {
+  const icon = <RxExclamationTriangle width={30} height={30} stroke="yellow" />;
+  return (
+    <div className="my-4 items-center text-sm">
+      <div className="flex">
+        <div className="mr-4 flex ">{icon}</div>
+        <div>
+          {
+            "Hmm. One website says it is open and the other says it's not. Look at "
+          }
+          <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">
+            this
+          </a>
+          {" and "}
+          <a href="https://www.nps.gov/yose/planyourvisit/tioga.htm">this</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const StatusOpen = () => {
   const icon = <RxCheckCircled width={30} height={30} stroke={"#00FF57"} />;
-  const text = "It's open, woo!";
-  return <StatusWrapper icon={icon} text={text} />;
+  return (
+    <div className="my-4 items-center text-sm">
+      <div className="flex">
+        <div className="mr-4 flex ">{icon}</div>
+        <div>
+          <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">
+            https://www.nps.gov/yose/planyourvisit/conditions.htm
+          </a>
+          {" says that it's open, woo!"}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const CurrentStatus = ({ history }: { history: HistoryRow }) => {
   const result = JSON.parse(history.result);
   if (result.is_open) {
-    return <StatusOpen />;
+    return <StatusMaybeOpen />;
   } else if (result.is_open_soon) {
     return <StatusOpenSoon />;
   } else {
@@ -105,11 +142,18 @@ function isValidEmail(email: string) {
   return emailRegex.test(email);
 }
 
-export default function Home({ histories }: { histories: HistoryRow[] }) {
+export default function Home({
+  histories,
+  conditionsHistories,
+}: {
+  histories: HistoryRow[];
+  conditionsHistories: ConditionsHistoryRow[];
+}) {
   const [email, setEmail] = useState("");
   const [formError, setFormError] = useState("");
   const [doneForm, setDoneForm] = useState(false);
   const mostRecentHistory = histories[0];
+  const mostRecentConditionsHistory = conditionsHistories[0];
 
   const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
@@ -145,28 +189,34 @@ export default function Home({ histories }: { histories: HistoryRow[] }) {
       <div className="flex justify-center m-4">
         <div className="flex max-w-lg flex-col items-center">
           <h1 className="text-3xl">Is Tioga Road Open?</h1>
-          <CurrentStatus history={mostRecentHistory} />
-          <div className=" mt-4 mb-1 flex">
-            <div className="mr-2 text-6xl">
-              <RiDoubleQuotesLeft width={20} height={20} />
+          {mostRecentConditionsHistory.is_open ? (
+            <StatusOpen />
+          ) : (
+            <div>
+              <CurrentStatus history={mostRecentHistory} />
+              <div className=" mt-4 mb-1 flex">
+                <div className="mr-2 text-6xl">
+                  <RiDoubleQuotesLeft width={20} height={20} />
+                </div>
+                <div className="text-sm tioga-scraped-text">
+                  {markdownToHtml(mostRecentHistory.tioga_contents)}
+                </div>
+              </div>
+              <div className="text-sm flex w-full justify-end mb-6">
+                - The{" "}
+                <a
+                  className="ml-1"
+                  href="https://www.nps.gov/yose/planyourvisit/tioga.htm"
+                >
+                  official Yosemite website
+                </a>
+              </div>
             </div>
-            <div className="text-sm tioga-scraped-text">
-              {markdownToHtml(mostRecentHistory.tioga_contents)}
-            </div>
-          </div>
-          <div className="text-sm flex w-full justify-end mb-6">
-            - The{" "}
-            <a
-              className="ml-1"
-              href="https://www.nps.gov/yose/planyourvisit/tioga.htm"
-            >
-              official Yosemite website
-            </a>
-          </div>
+          )}
 
-          <h1 className="text-3xl">Get Notified</h1>
+          <h1 className="text-3xl">Get Notified in 2024</h1>
           <div className="text-sm">
-            Get notified as soon as Yosemite determines an exact date for when
+            Get notified in 2024 when Yosemite determines an exact date for when
             Tioga Road will open.
           </div>
           <div className="my-4 flex w-full items-center justify-evenly">
@@ -230,10 +280,27 @@ export async function getServerSideProps() {
   //     "https://jsonplaceholder.typicode.com/posts?_limit=5"
   //   );
   const histories = await get_all_history();
+  const conditionsHistories = await get_all_conditions_history();
+  // console.log(histories[0]);
+
+  // const override_date = new Date(1990, 7, 22, 0, 0, 0, 0);
+  // if (new Date() > override_date) {
+  //   const override_history = {
+  //     result: `{"is_open":true,"is_open_soon":true,"hardcode_override":true}`,
+  //     id: 0,
+  //     ts: 0,
+  //     full_markdown: "",
+  //     tioga_contents: "",
+  //     misc_data: "",
+  //     sent_email: 0,
+  //   };
+  //   histories.unshift(override_history);
+  // }
 
   return {
     props: {
       histories,
+      conditionsHistories,
     },
   };
 }
