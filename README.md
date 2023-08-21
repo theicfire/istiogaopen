@@ -31,12 +31,14 @@ Then, the steps are:
 - `yarn build`
 - commit the new .tar.gz file
 - `git push dokku main`
+- If you get a 500 error, you may need to run `yarn check-tioga` to create some db tables.
 - `git push` (to also keep github updated/have a backup)
 
 *NOTE* if you change something in gitignore (like .env), that will not be deployed. You have to manually copy that over.
 
 # Logs
-Logs sit in the storage/ directory. On the deployed machine, that's at /var/lib/dokku/data/storage/tioga/
+- Logs from `logger.ts` sit in the storage/ directory. On the deployed machine, that's at /var/lib/dokku/data/storage/tioga/
+- I don't know how to directly get logs from nextjs. I should probably send the output to some file in the last command of the Dockerfile.
 
 # Cronjob
 dokku has the cronjob set up via app.json
