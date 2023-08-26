@@ -44,7 +44,7 @@ const WorksText = () => (
 const AboutText = () => (
   <div className="whitespace-pre-line text-sm">
     Hi, I{"'"}m <a href="https://chaselambda.com/">Chase</a>. The initial reason
-    for building this was for biking. Tioga Road is typically open to cyclists
+    for building this was for biking. Tioga Pass is typically open to cyclists
     only for one or two days every year. Yosemite gives notice when this is
     happening only a few days before prior, so if you want to ensure that you
     get the opportunity to ride it, you either need to check the website
@@ -61,7 +61,7 @@ const AboutText = () => (
 
 const TiogaText = () => (
   <div className="whitespace-pre-line text-sm">
-    Tioga Road is a gorgeous path that cuts through Yosemite, bridging the
+    Tioga Pass is a gorgeous road that cuts through Yosemite, bridging the
     eastern and western Sierras. It also provides access to many incredible
     hikes. It’s closed about half of the year due to snow.
   </div>
@@ -409,7 +409,7 @@ export default function Home({
       )}
       <div className="flex justify-center m-4">
         <div className="flex max-w-lg flex-col items-center">
-          <h1 className="text-3xl">Is Tioga Road Open?</h1>
+          <h1 className="text-3xl">Is Tioga Pass Open?</h1>
           <CurrentStatus
             plowingHistory={mostRecentPlowingHistory}
             conditionsHistory={mostRecentConditionsHistory}
@@ -418,7 +418,7 @@ export default function Home({
           <h1 className="text-3xl">Get Notified in 2024</h1>
           <div className="text-sm">
             Get notified in 2024 when Yosemite determines an exact date for when
-            Tioga Road will open.
+            Tioga Pass will open.
           </div>
           <div className="my-4 flex w-full items-center justify-evenly">
             <form onSubmit={submitEmail}>
@@ -467,7 +467,7 @@ export default function Home({
           <WorksText />
 
           <h2 className="mt-8 flex w-full justify-start text-2xl">
-            Tioga Road?
+            Tioga Pass?
           </h2>
           <TiogaText />
         </div>
