@@ -80,7 +80,7 @@ const StatusWrapper: React.FC<StatusWrapperProps> = ({
 }) => (
   <div>
     <div className="my-4 flex w-full items-center justify-center text-sm">
-      <div className="mr-4 flex ">{icon}</div>
+      <div className="mr-4">{icon}</div>
       <div className="flex">{text}</div>
     </div>
     <div className=" mt-4 mb-1 flex">
@@ -132,8 +132,8 @@ const StatusMaybeOpen = () => {
   const icon = <RxExclamationTriangle width={30} height={30} stroke="yellow" />;
   return (
     <div className="my-4 items-center text-sm">
-      <div className="flex">
-        <div className="mr-4 flex ">{icon}</div>
+      <div className="flex items-center">
+        <div className="mr-4">{icon}</div>
         <div>
           {
             "Hmm. One website says it is open and the other says it's not. Look at the "
@@ -156,8 +156,8 @@ const StatusOpen = () => {
   const icon = <RxCheckCircled width={30} height={30} stroke={"#00FF57"} />;
   return (
     <div className="my-4 items-center text-sm">
-      <div className="flex">
-        <div className="mr-4 flex ">{icon}</div>
+      <div className="flex items-center">
+        <div className="mr-4">{icon}</div>
         <div>
           Yes! See{" "}
           <a href="https://www.nps.gov/yose/planyourvisit/conditions.htm">
