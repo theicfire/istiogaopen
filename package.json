@@ -28,7 +28,7 @@
     "eslint-config-next": "13.4.4",
     "next": "13.4.4",
     "nodemailer": "^6.9.3",
-    "openai": "^3.2.1",
+    "openai": "^4.33.0",
     "postcss": "8.4.24",
     "promised-sqlite3": "^2.0.1",
     "react": "18.2.0",

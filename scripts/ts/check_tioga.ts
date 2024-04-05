@@ -1,8 +1,5 @@
-import {
-  OpenAIApi,
-  Configuration,
-  ChatCompletionRequestMessageRoleEnum,
-} from "openai";
+import { OpenAI } from "openai";
+
 import {
   createDb,
   getAllEmails,
@@ -23,10 +20,9 @@ import { sendEmailAsync } from "./send_email";
 import logger from "./logger";
 import "dotenv/config";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 const SYSTEM_PROMPT = `
 Analyze the content provided. List out all the dates in the content, and summarize what that date is referring to. Please capture every type of date, like "tomorrow", a month, a day of the week, or a specific date. The dates do not have to be specific. For example "sometime in June or July" is a valid date, and should be mentioned.
@@ -65,10 +61,7 @@ Great. Now, provide the following information in JSON:
 `;
 
 class LLMChain {
-  messages: Array<{
-    role: ChatCompletionRequestMessageRoleEnum;
-    content: string;
-  }>;
+  messages: Array<OpenAI.ChatCompletionMessageParam>;
 
   constructor() {
     this.messages = [
@@ -85,15 +78,14 @@ class LLMChain {
       content: message,
     });
 
-    const response = await openai.createChatCompletion({
-      // model: "gpt-3.5-turbo",
-      model: "gpt-4-0314",
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-1106-preview",
       messages: this.messages,
       temperature: 0.5,
       n: 1,
     });
 
-    const result = response.data?.["choices"][0]?.["message"]?.["content"];
+    const result = response.choices[0]?.message?.content;
 
     if (result) {
       this.messages.push({
