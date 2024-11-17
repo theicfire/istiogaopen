@@ -415,9 +415,9 @@ export default function Home({
             conditionsHistory={mostRecentConditionsHistory}
           />
 
-          <h1 className="text-3xl">Get Notified in 2024</h1>
+          <h1 className="text-3xl">Get Notified Spring 2025</h1>
           <div className="text-sm">
-            Get notified in 2024 when Yosemite determines an exact date for when
+            Get notified in 2025 when Yosemite determines an exact date for when
             Tioga Pass will open.
           </div>
           <div className="my-4 flex w-full items-center justify-evenly">
